@@ -31,7 +31,7 @@ Map::Map(int t_width, int t_height) : m_width(t_width), m_height(t_height)
 {
     for(int idx = 0; idx < m_width * m_height; ++idx)
     {
-        m_tiles.push_back(new Tile('#', TCODColor::white, TCODColor::grey, true, true, false));
+        m_tiles.push_back(new Tile('#', TCODColor::white, TCODColor::darkGrey, true, true, false));
     }
 }
 

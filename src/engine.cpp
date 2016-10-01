@@ -4,19 +4,16 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
                m_screen_width(t_screen_width), m_screen_height(t_screen_height),
                m_canvas(t_canvas)
 {
-    TCODConsole::setCustomFont("../data/fonts/arial12x12.png", TCOD_FONT_LAYOUT_TCOD | TCOD_FONT_TYPE_GREYSCALE);
-    TCODConsole::initRoot(m_screen_width, m_screen_height, "pathRL", false);
-
     m_dungeon = new Map(m_screen_width, m_screen_height);
-    for(int w = 20; w < 40; w++)
+    for(int w = 10; w < 60; w++)
     {
-        for(int h = 10; h < 60; h++)
+        for(int h = 10; h < 40; h++)
         {
             m_dungeon -> add_tile(w, h, new Tile(' ', TCODColor::black, TCODColor::black, false, false, false));
         }
     }
 
-    m_player = new Object(30, 40, '@', TCODColor::white, true, false);
+    m_player = new Object(30, 20, '@', TCODColor::white, true, false);
 }
 
 Engine::~Engine()
