@@ -1,10 +1,4 @@
-#include <iostream>
-#include <vector>
-
-#include "libtcod.hpp"
-#include "engine.h"
-#include "map.h"
-#include "object.h"
+#include "main.h"
 
 int main()
 {

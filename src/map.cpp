@@ -64,7 +64,7 @@ void Map::render(TCODConsole* canvas) const
     {
         for(int y = 0; y < m_height; ++y)
         {
-            if(m_tiles[x + (y * m_width)] != NULL)
+            if(m_tiles[x + (y * m_width)] != nullptr)
                 m_tiles[x + (y * m_width)] -> draw(x, y, canvas);
         }
     }
