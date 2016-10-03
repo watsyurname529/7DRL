@@ -4,7 +4,7 @@ CPP = clang++
 CPPFLAGS = -std=c++11 -O2 -Wall
 
 DEBUG = -g
-LDFLAGS = -ltcod -ltcodxx
+LDFLAGS = -L lib/ -ltcod -ltcodxx -Wl,-rpath=lib/
 INCLUDES = -I include/
 
 all: main
