@@ -36,7 +36,7 @@ class BSPTree
         ~BSPTree();
 
         void split_tree(const int num_splits, const int max_room_width, const int max_room_height);
-        void split_node(Node* t_root, const int max_room_width, const int max_room_height);
+        void split_node(Node* t_root);
         void fill_tree();
 
         std::vector<int> return_grid();        
