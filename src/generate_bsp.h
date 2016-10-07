@@ -1,6 +1,7 @@
 #ifndef GENERATE_BSP_H
 #define GENERATE_BSP_H
 
+#include <iostream>
 #include <random>
 #include <vector>
 
@@ -31,8 +32,10 @@ class BSPTree
 
         Node* m_root;
 
+        void split_tree(Node* t_root, const int num_splits, const int min_room_width, const int min_room_height);
+
     public:
-        BSPTree(int t_rnd_seed, int t_map_width, int t_map_height);
+        BSPTree(const int t_rnd_seed, const int t_map_width, const int t_map_height);
         ~BSPTree();
 
         void split_tree(const int num_splits, const int min_room_width, const int min_room_height);

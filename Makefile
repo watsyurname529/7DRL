@@ -10,6 +10,9 @@ INCLUDES = -I include/
 all: main
 
 main: 
+	$(CPP) $(CPPFLAGS) $(LDFLAGS) $(INCLUDES) src/*.cpp 
+
+debug:
 	$(CPP) $(DEBUG) $(CPPFLAGS) $(LDFLAGS) $(INCLUDES) src/*.cpp 
 
 clean:

@@ -15,21 +15,32 @@ BSPTree::BSPTree(int t_rnd_seed, int t_map_width, int t_map_height) :
     m_grid.resize(m_map_width * m_map_height, 0);
 }
 
+BSPTree::~BSPTree()
+{
+
+}
+
 void BSPTree::split_tree(const int num_splits, const int min_room_width, const int min_room_height)
 {
-    for(int current_split = 0; current_split < num_splits; ++current_split)
+    if(m_root == nullptr)
+        m_root = new Node(nullptr, nullptr, 0, 0, m_map_width, m_map_height);
+
+    split_tree(m_root, num_splits, min_room_width, min_room_height);
+}
+
+void BSPTree::split_tree(Node* t_root, const int num_splits, const int min_room_width, const int min_room_height)
+{
+    bool split_success = false;
+    if(t_root -> m_left_leaf == nullptr && t_root -> m_right_leaf == nullptr)
     {
-        if(current_split == 0)
-        {
-            m_root = new Node(nullptr, nullptr, 0, 0, m_map_width, m_map_height);
-        }
-        else
-        {
-            split_node(m_root -> m_left_leaf, 15, 15);
-            split_node(m_root -> m_right_leaf, 15, 15);
-        }
+        split_success = split_node(t_root, min_room_width, min_room_height);
     }
 
+    if(num_splits > 0 && split_success == true)
+    {
+        split_tree(t_root -> m_left_leaf, num_splits - 1, min_room_width, min_room_height);
+        split_tree(t_root -> m_right_leaf, num_splits - 1, min_room_width, min_room_height);
+    }
 }
 
 bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_room_height)

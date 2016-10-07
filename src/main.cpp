@@ -11,6 +11,9 @@ int main()
 
     Engine* engine_rl = new Engine(screen_width, screen_height);
 
+    BSPTree test_tree(12257, screen_width, screen_height);
+    test_tree.split_tree(4, 10, 10);
+
     while(TCODConsole::isWindowClosed() == false)
     {
         engine_rl -> render();
