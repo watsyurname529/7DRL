@@ -11,8 +11,10 @@ int main()
 
     Engine* engine_rl = new Engine(screen_width, screen_height);
 
-    BSPTree test_tree(12257, screen_width, screen_height);
-    test_tree.split_tree(4, 10, 10);
+    BSPTree test_tree(1225712, screen_width, screen_height);
+    test_tree.split_tree(2, 10, 10);
+    test_tree.fill_tree();
+    test_tree.print_grid();
 
     while(TCODConsole::isWindowClosed() == false)
     {

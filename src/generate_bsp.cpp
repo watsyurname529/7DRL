@@ -31,15 +31,22 @@ void BSPTree::split_tree(const int num_splits, const int min_room_width, const i
 void BSPTree::split_tree(Node* t_root, const int num_splits, const int min_room_width, const int min_room_height)
 {
     bool split_success = false;
-    if(t_root -> m_left_leaf == nullptr && t_root -> m_right_leaf == nullptr)
+    if(num_splits > 0)
     {
-        split_success = split_node(t_root, min_room_width, min_room_height);
-    }
+        if(t_root -> m_left_leaf == nullptr && t_root -> m_right_leaf == nullptr)
+        {
+            split_success = split_node(t_root, min_room_width, min_room_height);
+            std::cout << num_splits << " XL " << t_root -> m_left_leaf -> m_x1 << " " << t_root -> m_left_leaf -> m_x2 << std::endl;
+            std::cout << num_splits << " YL " << t_root -> m_left_leaf -> m_y1 << " " << t_root -> m_left_leaf -> m_y2 << std::endl;
+            std::cout << num_splits << " XR " << t_root -> m_right_leaf -> m_x1 << " " << t_root -> m_right_leaf -> m_x2 << std::endl;
+            std::cout << num_splits << " YR " << t_root -> m_right_leaf -> m_y1 << " " << t_root -> m_right_leaf -> m_y2 << std::endl;
+        }
 
-    if(num_splits > 0 && split_success == true)
-    {
-        split_tree(t_root -> m_left_leaf, num_splits - 1, min_room_width, min_room_height);
-        split_tree(t_root -> m_right_leaf, num_splits - 1, min_room_width, min_room_height);
+        if(split_success == true)
+        {
+            split_tree(t_root -> m_left_leaf, num_splits - 1, min_room_width, min_room_height);
+            split_tree(t_root -> m_right_leaf, num_splits - 1, min_room_width, min_room_height);
+        }
     }
 }
 
@@ -61,7 +68,7 @@ bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_r
         split_horizontal = split_direction(m_rnd_engine);
     }
 
-    if(split_horizontal == true)
+    if(split_horizontal == false)
     {
         if((current_room_width - min_room_width) >= min_room_width)
         {
@@ -94,4 +101,59 @@ bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_r
     }
 
     return split_success;
+}
+
+void BSPTree::fill_tree()
+{
+    if(m_root != nullptr)
+        fill_tree(m_root);
+}
+
+void BSPTree::fill_tree(Node* t_root)
+{
+    if(t_root -> m_left_leaf != nullptr && t_root -> m_right_leaf != nullptr)
+    {
+        fill_tree(t_root -> m_left_leaf);
+        fill_tree(t_root -> m_right_leaf);
+    }
+
+    else
+    {
+        // create_rect_room(t_root);
+    }
+}
+
+void BSPTree::create_rect_room(Node* t_leaf)
+{
+    std::uniform_int_distribution<int> room_width(t_leaf -> m_x1 + 4, t_leaf -> m_x2 - 1);
+    std::uniform_int_distribution<int> room_height(t_leaf -> m_y1 + 4, t_leaf -> m_y2 - 1);
+
+    //This currently sets the room at a relative (1,1) position in a given leaf
+    //Need to change so that it gets a random position in the room
+    int room_x1 = t_leaf -> m_x1 + 1;
+    int room_x2 = room_width(m_rnd_engine);
+    int room_y1 = t_leaf -> m_y1 + 1;
+    int room_y2 = room_height(m_rnd_engine);
+
+    // Probably walking off the array to cause the Segfaults
+    // Unfortunately is a random crash
+    for(int y = room_y1; y < room_y2; ++y)
+    {
+        for(int x = room_x1; x < room_x2; ++x)
+        {
+            m_grid[x + (y * m_map_width)] = 1;
+        }
+    }
+}
+
+void BSPTree::print_grid()
+{
+    for(int y = 0; y < m_map_height; ++y)
+    {
+        for(int x = 0; x < m_map_width; ++x)
+        {
+            std::cout << m_grid[x + (y * m_map_width)];
+        }
+        std::cout << "\n";
+    }
 }
