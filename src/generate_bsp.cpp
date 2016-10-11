@@ -36,14 +36,15 @@ void BSPTree::split_tree(Node* t_root, const int num_splits, const int min_room_
         if(t_root -> m_left_leaf == nullptr && t_root -> m_right_leaf == nullptr)
         {
             split_success = split_node(t_root, min_room_width, min_room_height);
-            std::cout << num_splits << " XL " << t_root -> m_left_leaf -> m_x1 << " " << t_root -> m_left_leaf -> m_x2 << std::endl;
-            std::cout << num_splits << " YL " << t_root -> m_left_leaf -> m_y1 << " " << t_root -> m_left_leaf -> m_y2 << std::endl;
-            std::cout << num_splits << " XR " << t_root -> m_right_leaf -> m_x1 << " " << t_root -> m_right_leaf -> m_x2 << std::endl;
-            std::cout << num_splits << " YR " << t_root -> m_right_leaf -> m_y1 << " " << t_root -> m_right_leaf -> m_y2 << std::endl;
         }
 
         if(split_success == true)
         {
+            std::cout << num_splits << " XL " << t_root -> m_left_leaf -> m_x1 << " " << t_root -> m_left_leaf -> m_x2 << std::endl;
+            std::cout << num_splits << " YL " << t_root -> m_left_leaf -> m_y1 << " " << t_root -> m_left_leaf -> m_y2 << std::endl;
+            std::cout << num_splits << " XR " << t_root -> m_right_leaf -> m_x1 << " " << t_root -> m_right_leaf -> m_x2 << std::endl;
+            std::cout << num_splits << " YR " << t_root -> m_right_leaf -> m_y1 << " " << t_root -> m_right_leaf -> m_y2 << std::endl;
+
             split_tree(t_root -> m_left_leaf, num_splits - 1, min_room_width, min_room_height);
             split_tree(t_root -> m_right_leaf, num_splits - 1, min_room_width, min_room_height);
         }
@@ -70,9 +71,9 @@ bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_r
 
     if(split_horizontal == false)
     {
-        if((current_room_width - min_room_width) >= min_room_width)
+        if((current_room_width - min_room_width) > min_room_width)
         {
-            std::uniform_int_distribution<int> room_width(0, t_root -> m_x2);
+            std::uniform_int_distribution<int> room_width(min_room_width, current_room_width - min_room_width);
             int split = room_width(m_rnd_engine);
 
             t_root -> m_left_leaf = new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1,
@@ -86,9 +87,9 @@ bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_r
 
     else
     {
-        if((current_room_height - min_room_height) >= min_room_height)
+        if((current_room_height - min_room_height) > min_room_height)
         {
-            std::uniform_int_distribution<int> room_height(0, t_root -> m_y2);
+            std::uniform_int_distribution<int> room_height(min_room_height, current_room_height - min_room_height);
             int split = room_height(m_rnd_engine);
 
             t_root -> m_left_leaf = new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1,
@@ -119,24 +120,29 @@ void BSPTree::fill_tree(Node* t_root)
 
     else
     {
-        // create_rect_room(t_root);
+        create_rect_room(t_root);
     }
 }
 
 void BSPTree::create_rect_room(Node* t_leaf)
 {
-    std::uniform_int_distribution<int> room_width(t_leaf -> m_x1 + 4, t_leaf -> m_x2 - 1);
-    std::uniform_int_distribution<int> room_height(t_leaf -> m_y1 + 4, t_leaf -> m_y2 - 1);
+    int room_max_width = t_leaf -> m_x2 - t_leaf -> m_x1;
+    int room_max_height = t_leaf -> m_y2 - t_leaf -> m_y1;
 
-    //This currently sets the room at a relative (1,1) position in a given leaf
-    //Need to change so that it gets a random position in the room
-    int room_x1 = t_leaf -> m_x1 + 1;
-    int room_x2 = room_width(m_rnd_engine);
-    int room_y1 = t_leaf -> m_y1 + 1;
-    int room_y2 = room_height(m_rnd_engine);
+    std::uniform_int_distribution<int> room_width(3, room_max_width);
+    std::uniform_int_distribution<int> room_height(3, room_max_height);
 
-    // Probably walking off the array to cause the Segfaults
-    // Unfortunately is a random crash
+    int room_w = room_width(m_rnd_engine);
+    int room_h = room_height(m_rnd_engine);
+
+    std::uniform_int_distribution<int> room_x(t_leaf -> m_x1, t_leaf -> m_x2 - room_w);
+    std::uniform_int_distribution<int> room_y(t_leaf -> m_y1, t_leaf -> m_y2 - room_h);
+
+    int room_x1 = room_x(m_rnd_engine);
+    int room_x2 = room_x1 + room_w;
+    int room_y1 = room_y(m_rnd_engine);
+    int room_y2 = room_y1 + room_h;
+
     for(int y = room_y1; y < room_y2; ++y)
     {
         for(int x = room_x1; x < room_x2; ++x)

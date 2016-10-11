@@ -7,13 +7,23 @@ DEBUG = -g
 LDFLAGS = -L lib/ -ltcod -ltcodxx -Wl,-rpath=lib/
 INCLUDES = -I include/
 
-all: main
+SOURCEDIR = src
+BUILDDIR = build
+EXECUTABLE = a.out
 
-main: 
-	$(CPP) $(CPPFLAGS) $(LDFLAGS) $(INCLUDES) src/*.cpp 
+SOURCES = src/engine.cpp src/generate_bsp.cpp src/main.cpp src/map.cpp src/object.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
 
-debug:
-	$(CPP) $(DEBUG) $(CPPFLAGS) $(LDFLAGS) $(INCLUDES) src/*.cpp 
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS) 
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $(LDFLAGS) $(OBJECTS) -o $@ 
+
+%.o: %.cpp
+	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+
+debug: CPPFLAGS += $(DEBUG)
+debug: $(EXECUTABLE)
 
 clean:
-	$(RM) a.out
+	$(RM) $(EXECUTABLE) $(OBJECTS)
