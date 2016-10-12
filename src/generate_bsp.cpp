@@ -40,11 +40,13 @@ void BSPTree::split_tree(Node* t_root, const int num_splits, const int min_room_
 
         if(split_success == true)
         {
+            #if DEBUG == 1
             std::cout << num_splits << " XL " << t_root -> m_left_leaf -> m_x1 << " " << t_root -> m_left_leaf -> m_x2 << std::endl;
             std::cout << num_splits << " YL " << t_root -> m_left_leaf -> m_y1 << " " << t_root -> m_left_leaf -> m_y2 << std::endl;
             std::cout << num_splits << " XR " << t_root -> m_right_leaf -> m_x1 << " " << t_root -> m_right_leaf -> m_x2 << std::endl;
             std::cout << num_splits << " YR " << t_root -> m_right_leaf -> m_y1 << " " << t_root -> m_right_leaf -> m_y2 << std::endl;
-
+            #endif
+            
             split_tree(t_root -> m_left_leaf, num_splits - 1, min_room_width, min_room_height);
             split_tree(t_root -> m_right_leaf, num_splits - 1, min_room_width, min_room_height);
         }
@@ -116,6 +118,7 @@ void BSPTree::fill_tree(Node* t_root)
     {
         fill_tree(t_root -> m_left_leaf);
         fill_tree(t_root -> m_right_leaf);
+        connect_leaf_center(t_root);
     }
 
     else
@@ -126,17 +129,17 @@ void BSPTree::fill_tree(Node* t_root)
 
 void BSPTree::create_rect_room(Node* t_leaf)
 {
-    int room_max_width = t_leaf -> m_x2 - t_leaf -> m_x1;
-    int room_max_height = t_leaf -> m_y2 - t_leaf -> m_y1;
+    int room_max_width = t_leaf -> m_x2 - t_leaf -> m_x1 - 2;
+    int room_max_height = t_leaf -> m_y2 - t_leaf -> m_y1 - 2;
 
-    std::uniform_int_distribution<int> room_width(3, room_max_width);
-    std::uniform_int_distribution<int> room_height(3, room_max_height);
+    std::uniform_int_distribution<int> room_width(5, room_max_width);
+    std::uniform_int_distribution<int> room_height(5, room_max_height);
 
     int room_w = room_width(m_rnd_engine);
     int room_h = room_height(m_rnd_engine);
 
-    std::uniform_int_distribution<int> room_x(t_leaf -> m_x1, t_leaf -> m_x2 - room_w);
-    std::uniform_int_distribution<int> room_y(t_leaf -> m_y1, t_leaf -> m_y2 - room_h);
+    std::uniform_int_distribution<int> room_x(t_leaf -> m_x1 + 1, t_leaf -> m_x2 - room_w - 1);
+    std::uniform_int_distribution<int> room_y(t_leaf -> m_y1 + 1, t_leaf -> m_y2 - room_h - 1);
 
     int room_x1 = room_x(m_rnd_engine);
     int room_x2 = room_x1 + room_w;
@@ -152,6 +155,11 @@ void BSPTree::create_rect_room(Node* t_leaf)
     }
 }
 
+std::vector<int> BSPTree::return_grid()
+{
+    return m_grid;
+}
+
 void BSPTree::print_grid()
 {
     for(int y = 0; y < m_map_height; ++y)
@@ -161,5 +169,35 @@ void BSPTree::print_grid()
             std::cout << m_grid[x + (y * m_map_width)];
         }
         std::cout << "\n";
+    }
+}
+
+void BSPTree::connect_leaf_center(Node* t_root)
+{
+    int left_x = t_root -> m_left_leaf -> m_x1 + (t_root -> m_left_leaf -> m_x2 - t_root -> m_left_leaf -> m_x1) / 2;
+    int left_y = t_root -> m_left_leaf -> m_y1 + (t_root -> m_left_leaf -> m_y2 - t_root -> m_left_leaf -> m_y1) / 2;
+
+    int right_x = t_root -> m_right_leaf -> m_x1 + (t_root -> m_right_leaf -> m_x2 - t_root -> m_right_leaf -> m_x1) / 2;
+    int right_y = t_root -> m_right_leaf -> m_y1 + (t_root -> m_right_leaf -> m_y2 - t_root -> m_right_leaf -> m_y1) / 2;
+
+    #if DEBUG == 1
+    std::cout << "LX " << left_x << " RX " << right_x << std::endl;
+    std::cout << "LY " << left_y << " RY " << right_y << std::endl;
+    #endif
+
+    if(left_y == right_y)
+    {
+        for(int x = left_x; x < right_x; ++x)
+        {
+            m_grid[x + (left_y * m_map_width)] = 1;
+        }
+    }
+
+    else
+    {  
+        for(int y = left_y; y < right_y; ++y)
+        {
+            m_grid[left_x + (y * m_map_width)] = 1;
+        }
     }
 }

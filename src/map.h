@@ -45,6 +45,8 @@ class Map
         void render(TCODConsole* canvas = TCODConsole::root) const;
         void add_tile(int x, int y, Tile* t_tile);
         Tile* get_tile(int x, int y) const;
+
+        void grid_to_map(std::vector<int> t_grid);
 };
 
 #endif

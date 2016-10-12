@@ -36,6 +36,7 @@ class BSPTree
         void split_tree(Node* t_root, const int num_splits, const int min_room_width, const int min_room_height);
         bool split_node(Node* t_root, const int min_room_width, const int min_room_height);
         void create_rect_room(Node* t_leaf);
+        void connect_leaf_center(Node* t_root);
 
     public:
         BSPTree(const int t_rnd_seed, const int t_map_width, const int t_map_height);

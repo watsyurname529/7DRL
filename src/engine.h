@@ -1,9 +1,11 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <random>
 #include <vector>
 
 #include "libtcod.hpp"
+#include "generate_bsp.h"
 #include "map.h"
 #include "object.h"
 

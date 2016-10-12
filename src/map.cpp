@@ -80,3 +80,16 @@ Tile* Map::get_tile(int x, int y) const
 {
     return m_tiles[x + (y * m_width)];
 }
+
+void Map::grid_to_map(std::vector<int> t_grid)
+{
+    for(int idx = 0; idx < m_width * m_height; ++idx)
+    {
+        delete m_tiles[idx];
+        
+        if(t_grid[idx] == 1)
+            m_tiles[idx] = new Tile(' ', TCODColor::black, TCODColor::black, false, false, false);
+        else
+            m_tiles[idx] = new Tile('#', TCODColor::white, TCODColor::darkGrey, true, true, false);
+    }
+}
