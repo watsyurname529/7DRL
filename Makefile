@@ -11,7 +11,7 @@ SOURCEDIR = src
 BUILDDIR = build
 EXECUTABLE = a.out
 
-SOURCES = src/engine.cpp src/generate_bsp.cpp src/main.cpp src/map.cpp src/object.cpp
+SOURCES = src/engine.cpp src/generate_bsp.cpp src/generate_cellular.cpp src/main.cpp src/map.cpp src/object.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 all: $(EXECUTABLE)

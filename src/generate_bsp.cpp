@@ -155,12 +155,12 @@ void BSPTree::create_rect_room(Node* t_leaf)
     }
 }
 
-std::vector<int> BSPTree::return_grid()
+std::vector<int> BSPTree::return_grid() const
 {
     return m_grid;
 }
 
-void BSPTree::print_grid()
+void BSPTree::print_grid() const
 {
     for(int y = 0; y < m_map_height; ++y)
     {

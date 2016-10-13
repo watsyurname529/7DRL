@@ -16,7 +16,7 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
 
     std::random_device rnd;
     BSPTree test_tree(rnd(), m_screen_width, m_screen_height);
-    test_tree.split_tree(6, 12, 12);
+    test_tree.split_tree(6, 10, 10);
     test_tree.fill_tree();
 
     m_dungeon -> grid_to_map(test_tree.return_grid());
