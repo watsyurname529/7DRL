@@ -170,6 +170,7 @@ void BSPTree::print_grid() const
         }
         std::cout << "\n";
     }
+    std::cout << "\n";
 }
 
 void BSPTree::connect_leaf_center(Node* t_root)

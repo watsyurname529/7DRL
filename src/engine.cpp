@@ -15,11 +15,19 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
     // }
 
     std::random_device rnd;
-    BSPTree test_tree(rnd(), m_screen_width, m_screen_height);
-    test_tree.split_tree(6, 10, 10);
-    test_tree.fill_tree();
+    // BSPTree test_tree(rnd(), m_screen_width, m_screen_height);
+    // test_tree.split_tree(6, 10, 10);
+    // test_tree.fill_tree();
 
-    m_dungeon -> grid_to_map(test_tree.return_grid());
+    CellularMap test_cell(rnd(), m_screen_width, m_screen_height);
+    CellRule rule_live(CELL_LIVE, 4, ">");
+    CellRule rule_die(CELL_DIE, 4, "<");
+    test_cell.set_start_chance(0.55);
+    test_cell.add_rule(rule_live);
+    test_cell.add_rule(rule_die);
+    test_cell.generate_grid(5);
+
+    m_dungeon -> grid_to_map(test_cell.return_grid());
 
     m_player = new Object(30, 20, '@', TCODColor::white, true, false);
 }

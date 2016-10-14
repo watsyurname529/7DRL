@@ -12,10 +12,14 @@ int main()
 
     Engine* engine_rl = new Engine(screen_width, screen_height);
 
-    // BSPTree test_tree(rnd(), screen_width, screen_height);
-    // test_tree.split_tree(6, 12, 12);
-    // test_tree.fill_tree();
-    // test_tree.print_grid();
+    // CellularMap test_cell(12257, screen_width, screen_height);
+    // CellRule rule_live(CELL_LIVE, 4, ">");
+    // CellRule rule_die(CELL_DIE, 2, "<");
+    // test_cell.set_start_chance(0.55);
+    // test_cell.add_rule(rule_live);
+    // test_cell.add_rule(rule_die);
+    // test_cell.generate_grid(3);
+    // test_cell.print_grid();
 
     while(TCODConsole::isWindowClosed() == false)
     {

@@ -8,6 +8,7 @@
 #include "libtcod.hpp"
 #include "engine.h"
 #include "generate_bsp.h"
+#include "generate_cellular.h"
 #include "map.h"
 #include "object.h"
 
