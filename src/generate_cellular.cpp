@@ -9,6 +9,16 @@ CellularMap::CellularMap(int t_rnd_seed, int t_map_width, int t_map_height) :
     m_grid.resize(m_map_width * m_map_height, 0);
 }
 
+CellularMap::CellularMap(int t_rnd_seed, int t_map_width, int t_map_height, float t_start) :
+                         m_rnd_seed(t_rnd_seed), 
+                         m_map_width(t_map_width), 
+                         m_map_height(t_map_height),
+                         m_start_chance(t_start),
+                         m_rnd_engine(t_rnd_seed)
+{
+    m_grid.resize(m_map_width * m_map_height, 0);
+}
+
 CellularMap::~CellularMap()
 {
     
@@ -70,17 +80,14 @@ int CellularMap::generate_grid(const int t_num_epoch)
     }
 
     std::vector<int> temp_grid(m_map_width * m_map_height, 0);
-    // print_grid();
     for(int epoch = 0; epoch < t_num_epoch; ++epoch)
     {
         temp_grid = m_grid;
-        // print_grid();
         for(int y = 0; y < m_map_height; ++y)
         {
             for(int x = 0; x < m_map_width; ++x)
             {
                 int num_adjacent = get_adjacent_cells(x, y);
-                // std::cout << num_adjacent << std::endl;
                 int rule_result = CELL_IGNORE;
 
                 for(int r = 0; r < m_rules.size(); ++r)
@@ -99,6 +106,16 @@ int CellularMap::generate_grid(const int t_num_epoch)
     }
 
     return 0;
+}
+
+void CellularMap::flood_fill(const int x, const int y)
+{
+    
+}
+
+void CellularMap::fill_unconnected()
+{
+
 }
 
 void CellularMap::print_grid() const

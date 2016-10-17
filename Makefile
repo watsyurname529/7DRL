@@ -11,15 +11,17 @@ SOURCEDIR = src
 BUILDDIR = build
 EXECUTABLE = a.out
 
-SOURCES = src/engine.cpp src/generate_bsp.cpp src/generate_cellular.cpp src/main.cpp src/map.cpp src/object.cpp
-OBJECTS = $(SOURCES:.cpp=.o)
+# SOURCES = src/engine.cpp src/generate_bsp.cpp src/generate_cellular.cpp src/main.cpp src/map.cpp src/object.cpp
+# OBJECTS = $(SOURCES:.cpp=.o)
+SOURCES = $(wildcard $(SOURCEDIR)/*.cpp)
+OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp,$(BUILDDIR)/%.o,$(SOURCES))
 
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(CPP) $(CPPFLAGS) $(INCLUDES) $(LDFLAGS) $(OBJECTS) -o $@ 
 
-%.o: %.cpp
+$(OBJECTS): $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 debug: CPPFLAGS += $(DEBUG)
