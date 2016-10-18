@@ -10,6 +10,7 @@ class Tile
         int m_symbol;
         TCODColor m_fg_color;
         TCODColor m_bg_color;
+        // TCODColor m_bg_color;
 
         bool m_explored;
         bool m_block_move;
@@ -18,13 +19,14 @@ class Tile
         // Terrain* m_terrain_type;
 
     public:
-        Tile(int t_symbol, const TCODColor& t_fg_color, const TCODColor& t_bg_color, 
+        Tile(int t_symbol, const TCODColor& t_fg_color, const TCODColor& t_bg_color,
              bool t_explored, bool t_block_move, bool t_block_sight);
 
         bool block_move() const;
         bool block_sight() const;
         bool is_explored() const;
-        void draw(int x, int y, TCODConsole* canvas = TCODConsole::root) const;
+        void set_explored();
+        void draw(int x, int y, bool fov, TCODConsole* canvas = TCODConsole::root) const;
 };
 
 class Map
@@ -34,6 +36,7 @@ class Map
         int m_height;
 
         std::vector<Tile*> m_tiles;
+        TCODMap* m_fovmap;
 
     public:
         Map(int t_width, int t_height);
@@ -47,6 +50,9 @@ class Map
         Tile* get_tile(int x, int y) const;
 
         void grid_to_map(std::vector<int> t_grid);
+
+        void compute_fov(int x, int y, int r) const;
+        bool is_in_fov(int x, int y) const;
 };
 
 #endif

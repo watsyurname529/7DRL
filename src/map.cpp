@@ -20,15 +20,27 @@ bool Tile::is_explored() const
     return m_explored;
 }
 
-void Tile::draw(int x, int y, TCODConsole* canvas) const
+void Tile::set_explored()
+{
+    m_explored = true;
+}
+
+void Tile::draw(int x, int y, bool fov, TCODConsole* canvas) const
 {
     canvas -> setCharBackground(x, y, m_bg_color);
     canvas -> setCharForeground(x, y, m_fg_color);
     canvas -> setChar(x, y, m_symbol);
+
+    if(fov == true)
+        canvas -> setCharBackground(x, y, TCODColor::grey, TCOD_BKGND_COLOR_DODGE);
+    else
+        canvas -> setCharBackground(x, y, TCODColor::grey, TCOD_BKGND_COLOR_BURN);
 }
 
 Map::Map(int t_width, int t_height) : m_width(t_width), m_height(t_height) 
 {
+    m_fovmap = new TCODMap(m_width, m_height);
+
     for(int idx = 0; idx < m_width * m_height; ++idx)
     {
         m_tiles.push_back(new Tile('#', TCODColor::white, TCODColor::darkGrey, true, true, false));
@@ -41,6 +53,7 @@ Map::~Map()
     {
         delete m_tiles[idx];
     }
+    delete m_fovmap;
 }
 
 bool Map::block_move(int x, int y) const
@@ -65,7 +78,12 @@ void Map::render(TCODConsole* canvas) const
         for(int y = 0; y < m_height; ++y)
         {
             if(m_tiles[x + (y * m_width)] != nullptr)
-                m_tiles[x + (y * m_width)] -> draw(x, y, canvas);
+            {
+                if(is_in_fov(x, y))
+                    m_tiles[x + (y * m_width)] -> draw(x, y, true, canvas);
+                else if(m_tiles[x + (y * m_width)] -> is_explored())
+                    m_tiles[x + (y * m_width)] -> draw(x, y, false, canvas);
+            }
         }
     }
 }
@@ -83,13 +101,39 @@ Tile* Map::get_tile(int x, int y) const
 
 void Map::grid_to_map(std::vector<int> t_grid)
 {
-    for(int idx = 0; idx < m_width * m_height; ++idx)
+    for(int y = 0; y < m_height; ++y)
     {
-        delete m_tiles[idx];
+        for(int x = 0; x < m_width; ++x)
+        {
+            int idx = x + (y * m_width);
+            delete m_tiles[idx];
         
-        if(t_grid[idx] == 1)
-            m_tiles[idx] = new Tile(' ', TCODColor::black, TCODColor::black, false, false, false);
-        else
-            m_tiles[idx] = new Tile('#', TCODColor::white, TCODColor::darkGrey, true, true, false);
+            if(t_grid[idx] == 1)
+            {
+                m_tiles[idx] = new Tile(' ', TCODColor::black, TCODColor::black, false, false, false);
+                m_fovmap -> setProperties(x, y, true, true);
+            }
+            else
+            {
+                m_tiles[idx] = new Tile('#', TCODColor::white, TCODColor::darkGrey, false, true, true);
+                m_fovmap -> setProperties(x, y, false, false);
+            }
+        }
     }
+}
+
+void Map::compute_fov(int x, int y, int r) const
+{
+    m_fovmap -> computeFov(x, y, r, true, FOV_SHADOW);
+}
+
+bool Map::is_in_fov(int x, int y) const
+{
+    if(m_fovmap -> isInFov(x, y))
+    {
+        m_tiles[x + (y * m_width)] -> set_explored();
+        return true;
+    }
+    else
+        return false;
 }

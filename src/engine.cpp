@@ -30,6 +30,7 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
     m_dungeon -> grid_to_map(test_cell.return_grid());
 
     m_player = new Object(30, 20, '@', TCODColor::white, true, false);
+    m_dungeon -> compute_fov(m_player -> get_x(), m_player -> get_y(), 10);
 }
 
 Engine::~Engine()
@@ -67,43 +68,69 @@ int Engine::input()
         TCOD_key_t key;
         TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
 
+        bool compute_fov = false;
+
         switch(key.vk)
         {
             case TCODK_UP:
             case TCODK_KP8:
                 if(m_dungeon -> block_move(m_player -> get_x(), m_player -> get_y() - 1) == false)
+                {
                     m_player -> move_dx(0, -1);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_DOWN:
             case TCODK_KP2:
                 if(m_dungeon -> block_move(m_player -> get_x(), m_player -> get_y() + 1) == false)
+                {
                     m_player -> move_dx(0, 1);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_LEFT:
             case TCODK_KP4:
                 if(m_dungeon -> block_move(m_player -> get_x() - 1, m_player -> get_y()) == false)
+                {
                     m_player -> move_dx(-1, 0);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_RIGHT:
             case TCODK_KP6:
                 if(m_dungeon -> block_move(m_player -> get_x() + 1, m_player -> get_y()) == false)
+                {
                     m_player -> move_dx(1, 0);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_KP7:
                 if(m_dungeon -> block_move(m_player -> get_x() - 1, m_player -> get_y() - 1) == false)
+                {
                     m_player -> move_dx(-1, -1);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_KP9:
                 if(m_dungeon -> block_move(m_player -> get_x() + 1, m_player -> get_y() - 1) == false)
+                {
                     m_player -> move_dx(1, -1);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_KP3:
                 if(m_dungeon -> block_move(m_player -> get_x() + 1, m_player -> get_y() + 1) == false)
+                {
                     m_player -> move_dx(1, 1);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_KP1:
                 if(m_dungeon -> block_move(m_player -> get_x() - 1, m_player -> get_y() + 1) == false)
+                {
                     m_player -> move_dx(-1, 1);
+                    compute_fov = true;
+                }
                 break;
             case TCODK_ESCAPE:
                 game_code = -1;
@@ -111,6 +138,9 @@ int Engine::input()
             default:
                 break;
         }
+
+        if(compute_fov == true)
+            m_dungeon -> compute_fov(m_player -> get_x(), m_player -> get_y(), 10);
 
         return game_code; 
 }
