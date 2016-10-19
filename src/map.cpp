@@ -1,9 +1,17 @@
 #include "map.h"
 
-Tile::Tile(int t_symbol, const TCODColor& t_fg_color, const TCODColor& t_bg_color, 
+Tile::Tile(int t_symbol, const TCODColor& t_fg_color, const TCODColor& t_bg_color_vis, const TCODColor& t_bg_color_hid,
            bool t_explored, bool t_block_move, bool t_block_sight) :
-           m_symbol(t_symbol), m_fg_color(t_fg_color), m_bg_color(t_bg_color), 
-           m_explored(t_explored), m_block_move(t_block_move), m_block_sight(t_block_sight) {}
+           m_symbol(t_symbol), 
+           m_fg_color(t_fg_color), 
+           m_bg_color_vis(t_bg_color_vis), 
+           m_bg_color_hid(t_bg_color_hid),
+           m_explored(t_explored), 
+           m_block_move(t_block_move), 
+           m_block_sight(t_block_sight)
+{
+
+}
 
 bool Tile::block_move() const
 {
@@ -27,29 +35,28 @@ void Tile::set_explored()
 
 void Tile::draw(int x, int y, bool fov, TCODConsole* canvas) const
 {
-    canvas -> setCharBackground(x, y, m_bg_color);
     canvas -> setCharForeground(x, y, m_fg_color);
     canvas -> setChar(x, y, m_symbol);
 
     if(fov == true)
-        canvas -> setCharBackground(x, y, TCODColor::grey, TCOD_BKGND_COLOR_DODGE);
+        canvas -> setCharBackground(x, y, m_bg_color_vis);
     else
-        canvas -> setCharBackground(x, y, TCODColor::grey, TCOD_BKGND_COLOR_BURN);
+        canvas -> setCharBackground(x, y, m_bg_color_hid);
 }
 
 Map::Map(int t_width, int t_height) : m_width(t_width), m_height(t_height) 
 {
     m_fovmap = new TCODMap(m_width, m_height);
 
-    for(int idx = 0; idx < m_width * m_height; ++idx)
+    for(int idx = 0; idx < m_tiles.size(); ++idx)
     {
-        m_tiles.push_back(new Tile('#', TCODColor::white, TCODColor::darkGrey, true, true, false));
+        m_tiles.push_back(new Tile('#', TCODColor::white, TCODColor::darkGrey, TCODColor::darkerGrey, true, true, false));
     }
 }
 
 Map::~Map()
 {
-    for(int idx = 0; idx < m_width * m_height; ++idx)
+    for(int idx = 0; idx < m_tiles.size(); ++idx)
     {
         delete m_tiles[idx];
     }
@@ -110,12 +117,12 @@ void Map::grid_to_map(std::vector<int> t_grid)
         
             if(t_grid[idx] == 1)
             {
-                m_tiles[idx] = new Tile(' ', TCODColor::black, TCODColor::black, false, false, false);
+                m_tiles[idx] = new Tile(' ', TCODColor::black, TCODColor::sepia, TCODColor::darkerSepia, false, false, false);
                 m_fovmap -> setProperties(x, y, true, true);
             }
             else
             {
-                m_tiles[idx] = new Tile('#', TCODColor::white, TCODColor::darkGrey, false, true, true);
+                m_tiles[idx] = new Tile('#', TCODColor::white, TCODColor::darkGrey, TCODColor::darkerGrey, false, true, true);
                 m_fovmap -> setProperties(x, y, false, false);
             }
         }

@@ -9,8 +9,8 @@ class Tile
     private:
         int m_symbol;
         TCODColor m_fg_color;
-        TCODColor m_bg_color;
-        // TCODColor m_bg_color;
+        TCODColor m_bg_color_vis;
+        TCODColor m_bg_color_hid;
 
         bool m_explored;
         bool m_block_move;
@@ -19,7 +19,7 @@ class Tile
         // Terrain* m_terrain_type;
 
     public:
-        Tile(int t_symbol, const TCODColor& t_fg_color, const TCODColor& t_bg_color,
+        Tile(int t_symbol, const TCODColor& t_fg_color, const TCODColor& t_bg_color_vis, const TCODColor& t_bg_color_hid,
              bool t_explored, bool t_block_move, bool t_block_sight);
 
         bool block_move() const;

@@ -110,7 +110,19 @@ int CellularMap::generate_grid(const int t_num_epoch)
 
 void CellularMap::flood_fill(const int x, const int y)
 {
-    
+    std::vector<int> stack(50);
+    bool span_above = false;
+    bool span_below = false;
+    int dx = 0;
+    int dy = 0;
+
+    stack.push_back(x + (y * m_map_width));
+
+    while(stack.size() > 0)
+    {
+        stack.pop_back();
+        //do stuff...
+    }
 }
 
 void CellularMap::fill_unconnected()
