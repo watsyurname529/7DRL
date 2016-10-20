@@ -108,56 +108,67 @@ int CellularMap::generate_grid(const int t_num_epoch)
     return 0;
 }
 
-// void CellularMap::flood_fill(const int x, const int y)
-// {
-    // std::vector<int> stack(50);
-    // bool span_above = false;
-    // bool span_below = false;
-    // int dx = 0;
-    // int dy = 0;
-    // int i = 0;
+void CellularMap::flood_fill(const int x, const int y)
+{
+    std::vector<int> stack(100);
+    bool span_above = false;
+    bool span_below = false;
+    int dx = 0;
+    int dy = 0;
+    int i = 0;
 
-    // int start_tile = m_grid[x + (y * m_map_width)];
-    // stack.push_back(x + (y * m_map_width));
+    const int start_tile = m_grid[x + (y * m_map_width)];
+    stack.push_back(x + (y * m_map_width));
 
-    // while(stack.size() > 0)
-    // {
-    //     i = stack.back();
-    //     dx = i % m_map_width;
-    //     dy = i / m_map_width;
-    //     stack.pop_back();
-        
-    //     while(dx < m_map_width && m_grid[dx + (dy * m_map_width)] == start_tile)
-    //     {
-    //         m_grid[dx + (dy * m_map_width)] = 9;
-    //         if(span_above == false && dy > 0 && m_grid[dx + ((dy-1) * m_map_width)] == start_tile)
-    //         {
-    //             stack.push_back(dx + ((dy-1) * m_map_width));
-    //             span_above = true;
-    //         }
-    //         else if(span_above != false && dy > 0 && m_grid[dx + ((dy-1) * m_map_width)] != start_tile)
-    //         {
-    //             span_above = false;
-    //         }
-    //         if(span_below == false && dy < (m_map_height - 1) && m_grid[dx + ((dy+1) * m_map_width)] == start_tile)
-    //         {
-    //             stack.push_back(dx + ((dy+1) * m_map_width));
-    //             span_below = true;
-    //         }
-    //         else if(span_below != false && dy < (m_map_height - 1) && m_grid[dx + ((dy+1) * m_map_width)] != start_tile)
-    //         {
-    //             span_below = false;
-    //         }
+    auto test_tile = [&](int x, int y) -> bool {return m_grid[x + (y * m_map_width)] == start_tile;};
+    std::cout << "Lambda output: " << test_tile(x, y) << "\n";
 
-    //         dx += 1;
-    //     }
-    // }
-// }
+    while(stack.size() > 0)
+    {
+        i = stack.back();
+        dx = i % m_map_width;
+        dy = i / m_map_width;
+        span_above = false;
+        span_below = false;
+        stack.pop_back();
 
-// void CellularMap::fill_unconnected()
-// {
-    // flood_fill(m_map_width / 2, m_map_height / 2);
-// }
+        while(dx >= 0 && test_tile(dx, dy) == true) //&& m_grid[dx + (dy * m_map_width)] == start_tile)
+        {
+            dx -= 1;
+        }
+        dx += 1;
+
+        while(dx < m_map_width && test_tile(dx, dy) == true) //m_grid[dx + (dy * m_map_width)] == start_tile)
+        {
+            m_grid[dx + (dy * m_map_width)] = 4;
+            if(span_above == false && dy > 0 && test_tile(dx, dy-1) == true) //m_grid[dx + ((dy-1) * m_map_width)] == start_tile)
+            {
+                stack.push_back(dx + ((dy-1) * m_map_width));
+                span_above = true;
+            }
+            else if(span_above != false && dy > 0 && test_tile(dx, dy-1) == false) //m_grid[dx + ((dy-1) * m_map_width)] != start_tile)
+            {
+                span_above = false;
+            }
+            if(span_below == false && dy < (m_map_height - 1) && test_tile(dx, dy+1) == true) //m_grid[dx + ((dy+1) * m_map_width)] == start_tile)
+            {
+                stack.push_back(dx + ((dy+1) * m_map_width));
+                span_below = true;
+            }
+            else if(span_below != false && dy < (m_map_height - 1) && test_tile(dx, dy+1) == false) //m_grid[dx + ((dy+1) * m_map_width)] != start_tile)
+            {
+                span_below = false;
+            }
+
+            dx += 1;
+        }
+    }
+}
+
+void CellularMap::fill_unconnected()
+{
+    flood_fill(m_map_width / 2, m_map_height / 2);
+}
 
 void CellularMap::print_grid() const
 {

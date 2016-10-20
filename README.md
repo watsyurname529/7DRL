@@ -1,2 +1,2 @@
 # 7DRL
-Seven-ish Day Roguelike Development
+Seven-ish ~~Day~~ Week Roguelike Development
