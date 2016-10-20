@@ -48,7 +48,7 @@ Map::Map(int t_width, int t_height) : m_width(t_width), m_height(t_height)
 {
     m_fovmap = new TCODMap(m_width, m_height);
 
-    for(int idx = 0; idx < m_tiles.size(); ++idx)
+    for(int idx = 0; idx < m_width * m_height; ++idx)
     {
         m_tiles.push_back(new Tile('#', TCODColor::white, TCODColor::darkGrey, TCODColor::darkerGrey, true, true, false));
     }
