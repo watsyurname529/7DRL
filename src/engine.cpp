@@ -28,9 +28,9 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
     test_cell.generate_grid(5);
 
     m_dungeon -> grid_to_map(test_cell.return_grid());
-    test_cell.print_grid();
-    test_cell.fill_unconnected();
-    test_cell.print_grid();
+    // test_cell.print_grid();
+    // test_cell.fill_unconnected();
+    // test_cell.print_grid();
 
     m_player = new Object(m_screen_width / 2, m_screen_height / 2, '@', TCODColor::white, true, false);
     m_dungeon -> compute_fov(m_player -> get_x(), m_player -> get_y(), 10);

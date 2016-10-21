@@ -6,7 +6,7 @@ CellularMap::CellularMap(int t_rnd_seed, int t_map_width, int t_map_height) :
                          m_map_height(t_map_height), 
                          m_rnd_engine(t_rnd_seed)
 {
-    m_grid.resize(m_map_width * m_map_height, 0);
+    m_grid.resize(m_map_width * m_map_height, TileID::WALL);
 }
 
 CellularMap::CellularMap(int t_rnd_seed, int t_map_width, int t_map_height, float t_start) :
@@ -16,7 +16,7 @@ CellularMap::CellularMap(int t_rnd_seed, int t_map_width, int t_map_height, floa
                          m_start_chance(t_start),
                          m_rnd_engine(t_rnd_seed)
 {
-    m_grid.resize(m_map_width * m_map_height, 0);
+    m_grid.resize(m_map_width * m_map_height, TileID::WALL);
 }
 
 CellularMap::~CellularMap()
@@ -74,9 +74,9 @@ int CellularMap::generate_grid(const int t_num_epoch)
     for(int i = 0; i < m_grid.size(); ++i)
     {
         if(start_probability(m_rnd_engine) <= m_start_chance)
-            m_grid[i] = 1;
+            m_grid[i] = TileID::FLOOR;
         else
-            m_grid[i] = 0;
+            m_grid[i] = TileID::WALL;
     }
 
     std::vector<int> temp_grid(m_map_width * m_map_height, 0);
@@ -97,9 +97,9 @@ int CellularMap::generate_grid(const int t_num_epoch)
                 }
 
                 if(rule_result == CELL_LIVE)
-                    temp_grid[x + (y * m_map_width)] = 1;
+                    temp_grid[x + (y * m_map_width)] = TileID::FLOOR;
                 else if(rule_result == CELL_DIE)
-                    temp_grid[x + (y * m_map_width)] = 0;
+                    temp_grid[x + (y * m_map_width)] = TileID::WALL;
             }
         }
         m_grid = temp_grid;

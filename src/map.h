@@ -4,6 +4,13 @@
 #include <vector>
 #include <libtcod.hpp>
 
+enum TileID
+{
+    WALL,
+    FLOOR,
+    FLOOD = 100
+};
+
 class Tile
 {
     private:
