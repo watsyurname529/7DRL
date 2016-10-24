@@ -67,6 +67,9 @@ class CellularMap
         std::mt19937 m_rnd_engine;
 
         void flood_fill(const int x, const int y);
+        void connect_rooms();
+        int generate_grid(const int t_num_epoch);
+        int get_adjacent_cells(const int x, const int y);
 
     public:
         CellularMap(const int t_rnd_seed, const int t_map_width, const int t_map_height);
@@ -75,10 +78,7 @@ class CellularMap
 
         void set_start_chance(float t_start);
         void add_rule(CellRule& t_rule);
-        int get_adjacent_cells(const int x, const int y);
-        int generate_grid(const int t_num_epoch);
-        void fill_unconnected();
-        void connect_rooms();
+        void generate_single_cavern(const int t_num_epoch, const int t_max_tries = 10);
         void print_grid() const;
         std::vector<int> return_grid() const;
 };

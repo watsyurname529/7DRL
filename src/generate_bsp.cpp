@@ -134,7 +134,7 @@ void BSPTree::fill_tree(Node* t_root)
 
     else
     {
-        create_rect_room(t_root);
+        create_cave_room(t_root);
     }
 }
 
@@ -162,6 +162,38 @@ void BSPTree::create_rect_room(Node* t_leaf)
         for(int x = room_x1; x < room_x2; ++x)
         {
             m_grid[x + (y * m_map_width)] = TileID::FLOOR;
+        }
+    }
+}
+
+void BSPTree::create_cave_room(Node* t_leaf)
+{
+    int room_max_width = t_leaf -> m_x2 - t_leaf -> m_x1 - 2;
+    int room_max_height = t_leaf -> m_y2 - t_leaf -> m_y1 - 2;
+    std::uniform_int_distribution<int> rnd(0, 1000);
+
+    CellularMap cave(rnd(m_rnd_engine), room_max_width, room_max_height);
+    CellRule rule_live(CELL_LIVE, 4, ">");
+    CellRule rule_die(CELL_DIE, 4, "<");
+    cave.set_start_chance(0.55);
+    cave.add_rule(rule_live);
+    cave.add_rule(rule_die);
+    cave.generate_single_cavern(6);
+
+    std::vector<int> grid_cave = cave.return_grid();
+    
+    int room_x1 = t_leaf -> m_x1 + 1;
+    int room_y1 = t_leaf -> m_y1 + 1;
+    int room_x2 = t_leaf -> m_x2 - 1;
+    int room_y2 = t_leaf -> m_y2 - 1;
+    
+    int i = 0;
+    for(int y = room_y1; y < room_y2; ++y)
+    {
+        for(int x = room_x1; x < room_x2; ++x)
+        {
+            m_grid[x + (y * m_map_width)] = grid_cave[i];
+            i++;
         }
     }
 }

@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "libtcod.hpp"
+#include "generate_cellular.h"
 #include "map.h"
 
 struct Node
@@ -36,6 +37,7 @@ class BSPTree
         void split_tree(Node* t_root, const int num_splits, const int min_room_width, const int min_room_height);
         bool split_node(Node* t_root, const int min_room_width, const int min_room_height);
         void create_rect_room(Node* t_leaf);
+        void create_cave_room(Node* t_leaf);
         void connect_leaf_center(Node* t_root);
 
     public:

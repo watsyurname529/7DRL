@@ -105,6 +105,17 @@ int CellularMap::generate_grid(const int t_num_epoch)
         m_grid = temp_grid;
     }
 
+    for(int i = 0; i < m_grid.size(); ++i)
+    {
+        int x = i % m_map_width;
+        int y = i / m_map_width;
+
+        if(y == 0 || y == m_map_height - 1)
+            m_grid[i] = TileID::WALL;
+        else if(x == 0 || x == m_map_width - 1)
+            m_grid[i] = TileID::WALL;
+    }
+
     return 0;
 }
 
@@ -121,7 +132,7 @@ void CellularMap::flood_fill(const int x, const int y)
     stack.push_back(x + (y * m_map_width));
 
     auto test_tile = [&](int x, int y) -> bool {return m_grid[x + (y * m_map_width)] == start_tile;};
-    std::cout << "Lambda output: " << test_tile(x, y) << "\n";
+    // std::cout << "Lambda output: " << test_tile(x, y) << "\n";
 
     while(stack.size() > 0)
     {
@@ -132,30 +143,30 @@ void CellularMap::flood_fill(const int x, const int y)
         span_below = false;
         stack.pop_back();
 
-        while(dx >= 0 && test_tile(dx, dy) == true) //&& m_grid[dx + (dy * m_map_width)] == start_tile)
+        while(dx >= 0 && test_tile(dx, dy) == true)
         {
             dx -= 1;
         }
         dx += 1;
 
-        while(dx < m_map_width && test_tile(dx, dy) == true) //m_grid[dx + (dy * m_map_width)] == start_tile)
+        while(dx < m_map_width && test_tile(dx, dy) == true)
         {
-            m_grid[dx + (dy * m_map_width)] = 4;
-            if(span_above == false && dy > 0 && test_tile(dx, dy-1) == true) //m_grid[dx + ((dy-1) * m_map_width)] == start_tile)
+            m_grid[dx + (dy * m_map_width)] += TileID::FLOOD;
+            if(span_above == false && dy > 0 && test_tile(dx, dy-1) == true)
             {
                 stack.push_back(dx + ((dy-1) * m_map_width));
                 span_above = true;
             }
-            else if(span_above != false && dy > 0 && test_tile(dx, dy-1) == false) //m_grid[dx + ((dy-1) * m_map_width)] != start_tile)
+            else if(span_above != false && dy > 0 && test_tile(dx, dy-1) == false)
             {
                 span_above = false;
             }
-            if(span_below == false && dy < (m_map_height - 1) && test_tile(dx, dy+1) == true) //m_grid[dx + ((dy+1) * m_map_width)] == start_tile)
+            if(span_below == false && dy < (m_map_height - 1) && test_tile(dx, dy+1) == true)
             {
                 stack.push_back(dx + ((dy+1) * m_map_width));
                 span_below = true;
             }
-            else if(span_below != false && dy < (m_map_height - 1) && test_tile(dx, dy+1) == false) //m_grid[dx + ((dy+1) * m_map_width)] != start_tile)
+            else if(span_below != false && dy < (m_map_height - 1) && test_tile(dx, dy+1) == false)
             {
                 span_below = false;
             }
@@ -165,9 +176,37 @@ void CellularMap::flood_fill(const int x, const int y)
     }
 }
 
-void CellularMap::fill_unconnected()
+void CellularMap::generate_single_cavern(const int t_num_epoch, const int t_max_tries)
 {
-    flood_fill(m_map_width / 2, m_map_height / 2);
+    int kill_switch = 0;
+    int num_flood_tiles = 0;
+    float flood_fraction = 0.0;
+
+    while(flood_fraction < 0.45)
+    {
+        generate_grid(t_num_epoch);
+        flood_fill(m_map_width / 2, m_map_height / 2);
+
+        for(int i = 0; i < m_grid.size(); ++i)
+        {
+            if(m_grid[i] >= (TileID::FLOOD + TileID::FLOOR))
+                num_flood_tiles++;
+        }
+
+        flood_fraction = num_flood_tiles / static_cast<float>(m_grid.size());
+        // std::cout << "Flood Fraction " << flood_fraction << "\n";
+
+        if(kill_switch++ >= t_max_tries)
+            break;
+    }
+
+    for(int i = 0; i < m_grid.size(); i++)
+    {
+        if(m_grid[i] >= TileID::FLOOD)
+            m_grid[i] -= TileID::FLOOD;
+        else
+            m_grid[i] = TileID::WALL;
+    }
 }
 
 void CellularMap::print_grid() const

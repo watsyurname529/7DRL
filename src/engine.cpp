@@ -16,7 +16,7 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
 
     std::random_device rnd;
     // BSPTree test_tree(rnd(), m_screen_width, m_screen_height);
-    // test_tree.split_tree(6, 10, 10);
+    // test_tree.split_tree(5, 15, 15);
     // test_tree.fill_tree();
 
     CellularMap test_cell(rnd(), m_screen_width, m_screen_height);
@@ -25,12 +25,9 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
     test_cell.set_start_chance(0.55);
     test_cell.add_rule(rule_live);
     test_cell.add_rule(rule_die);
-    test_cell.generate_grid(5);
-
+    test_cell.generate_single_cavern(5);
+    // test_cell.print_grid();
     m_dungeon -> grid_to_map(test_cell.return_grid());
-    // test_cell.print_grid();
-    // test_cell.fill_unconnected();
-    // test_cell.print_grid();
 
     m_player = new Object(m_screen_width / 2, m_screen_height / 2, '@', TCODColor::white, true, false);
     m_dungeon -> compute_fov(m_player -> get_x(), m_player -> get_y(), 10);
