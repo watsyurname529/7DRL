@@ -45,9 +45,10 @@ class Room
 
     public:
         Room();
-        Room(std::vector<int> t_grid);
+        Room(std::vector<int>& t_grid);
 
-        void set_room_grid(std::vector<int> t_grid);
+        void add_point(const int i);
+        void set_room_grid(std::vector<int>& t_grid);
         std::vector<int> return_grid() const;
 
         template<class RND>
@@ -58,7 +59,7 @@ class Room
             if(m_room_grid.size() > 0)
             {
                 std::uniform_int_distribution<int> choose_random(0, m_room_grid.size() - 1);
-                rnd_point = choose_random(rand_gen);
+                rnd_point = m_room_grid[choose_random(rand_gen)];
             }
 
             return rnd_point;

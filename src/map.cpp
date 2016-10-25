@@ -49,12 +49,17 @@ Room::Room()
 
 }
 
-Room::Room(std::vector<int> t_grid)
+Room::Room(std::vector<int>& t_grid)
 {
     m_room_grid = t_grid;
 }
 
-void Room::set_room_grid(std::vector<int> t_grid)
+void Room::add_point(const int i)
+{
+    m_room_grid.push_back(i);
+}
+
+void Room::set_room_grid(std::vector<int>& t_grid)
 {
     m_room_grid = t_grid;
 }

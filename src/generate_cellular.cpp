@@ -24,7 +24,7 @@ CellularMap::~CellularMap()
     
 }
 
-void CellularMap::set_start_chance(float t_start)
+void CellularMap::set_start_chance(const float t_start)
 {
     if(t_start > 1.0 || t_start < 0.0)
     {
@@ -207,6 +207,43 @@ void CellularMap::generate_single_cavern(const int t_num_epoch, const int t_max_
         else
             m_grid[i] = TileID::WALL;
     }
+}
+
+void CellularMap::find_rooms()
+{
+    std::vector<int> temp_grid = m_grid;
+
+    for(int i = 0; i < temp_grid.size(); ++i)
+    {
+        if(temp_grid[i] == TileID::FLOOR)
+        {
+            Room temp_room;
+            flood_fill(i % m_map_width, i / m_map_height);
+            for(int j = 0; j < temp_grid.size(); ++j)
+            {
+                if(temp_grid[j] == (TileID::FLOOR + TileID::FLOOD))
+                    temp_room.add_point(j);
+            }
+            m_rooms.push_back(temp_room);
+            flood_fill(i % m_map_width, i / m_map_height);
+        }
+    }
+}
+
+void CellularMap::print_rooms()
+{
+    find_rooms();
+
+    for(int r = 0; r < m_rooms.size(); ++r)
+    {
+        std::vector<int> room_grid = m_rooms[r].return_grid();
+        for(int i = 0; i < room_grid.size(); ++i)
+        {
+            m_grid[room_grid[i]] = r+2;
+        }
+    }
+
+    print_grid();
 }
 
 void CellularMap::print_grid() const
