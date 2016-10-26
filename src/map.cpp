@@ -49,9 +49,14 @@ Room::Room()
 
 }
 
-Room::Room(std::vector<int>& t_grid)
+// Room::Room(std::vector<int>& t_grid)
+// {
+//     m_room_grid = t_grid;
+// }
+
+Room::Room(const Room& t_room)
 {
-    m_room_grid = t_grid;
+    m_room_grid = t_room.m_room_grid;
 }
 
 void Room::add_point(const int i)
@@ -90,17 +95,17 @@ Map::~Map()
 
 bool Map::block_move(int x, int y) const
 {
-    return m_tiles[x + (y * m_width)] -> block_move();
+    return m_tiles.at(x + (y * m_width)) -> block_move();
 }
 
 bool Map::block_sight(int x, int y) const
 {
-    return m_tiles[x + (y * m_width)] -> block_sight();
+    return m_tiles.at(x + (y * m_width)) -> block_sight();
 }
 
 bool Map::is_explored(int x, int y) const
 {
-    return m_tiles[x + (y * m_width)] -> is_explored();
+    return m_tiles.at(x + (y * m_width)) -> is_explored();
 }
 
 void Map::render(TCODConsole* canvas) const
@@ -109,12 +114,12 @@ void Map::render(TCODConsole* canvas) const
     {
         for(int y = 0; y < m_height; ++y)
         {
-            if(m_tiles[x + (y * m_width)] != nullptr)
+            if(m_tiles.at(x + (y * m_width)) != nullptr)
             {
                 if(is_in_fov(x, y))
-                    m_tiles[x + (y * m_width)] -> draw(x, y, true, canvas);
-                else if(m_tiles[x + (y * m_width)] -> is_explored())
-                    m_tiles[x + (y * m_width)] -> draw(x, y, false, canvas);
+                    m_tiles.at(x + (y * m_width)) -> draw(x, y, true, canvas);
+                else if(m_tiles.at(x + (y * m_width)) -> is_explored())
+                    m_tiles.at(x + (y * m_width)) -> draw(x, y, false, canvas);
             }
         }
     }
@@ -122,13 +127,13 @@ void Map::render(TCODConsole* canvas) const
 
 void Map::add_tile(int x, int y, Tile* t_tile)
 {
-    delete m_tiles[x + (y * m_width)];
-    m_tiles[x + (y * m_width)] = t_tile;
+    delete m_tiles.at(x + (y * m_width));
+    m_tiles.at(x + (y * m_width)) = t_tile;
 }
 
 Tile* Map::get_tile(int x, int y) const
 {
-    return m_tiles[x + (y * m_width)];
+    return m_tiles.at(x + (y * m_width));
 }
 
 void Map::grid_to_map(std::vector<int> t_grid)
@@ -138,16 +143,16 @@ void Map::grid_to_map(std::vector<int> t_grid)
         for(int x = 0; x < m_width; ++x)
         {
             int idx = x + (y * m_width);
-            delete m_tiles[idx];
+            delete m_tiles.at(idx);
         
-            if(t_grid[idx] == 1)
+            if(t_grid.at(idx) == 1)
             {
-                m_tiles[idx] = new Tile(' ', TCODColor::black, TCODColor::sepia, TCODColor::darkerSepia, false, false, false);
+                m_tiles.at(idx) = new Tile(' ', TCODColor::black, TCODColor::sepia, TCODColor::darkerSepia, false, false, false);
                 m_fovmap -> setProperties(x, y, true, true);
             }
             else
             {
-                m_tiles[idx] = new Tile('#', TCODColor::white, TCODColor::darkGrey, TCODColor::darkerGrey, false, true, true);
+                m_tiles.at(idx) = new Tile('#', TCODColor::white, TCODColor::darkGrey, TCODColor::darkerGrey, false, true, true);
                 m_fovmap -> setProperties(x, y, false, false);
             }
         }
@@ -163,7 +168,7 @@ bool Map::is_in_fov(int x, int y) const
 {
     if(m_fovmap -> isInFov(x, y))
     {
-        m_tiles[x + (y * m_width)] -> set_explored();
+        m_tiles.at(x + (y * m_width)) -> set_explored();
         return true;
     }
     else

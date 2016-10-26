@@ -10,7 +10,7 @@ enum TileID
 {
     WALL,
     FLOOR,
-    FLOOD = 100
+    FLOOD = 3
 };
 
 class Tile
@@ -45,7 +45,8 @@ class Room
 
     public:
         Room();
-        Room(std::vector<int>& t_grid);
+        // Room(std::vector<int>& t_grid);
+        Room(const Room& t_room);
 
         void add_point(const int i);
         void set_room_grid(std::vector<int>& t_grid);

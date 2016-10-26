@@ -19,11 +19,6 @@ CellularMap::CellularMap(int t_rnd_seed, int t_map_width, int t_map_height, floa
     m_grid.resize(m_map_width * m_map_height, TileID::WALL);
 }
 
-CellularMap::~CellularMap()
-{
-    
-}
-
 void CellularMap::set_start_chance(const float t_start)
 {
     if(t_start > 1.0 || t_start < 0.0)
@@ -53,7 +48,7 @@ int CellularMap::get_adjacent_cells(const int x, const int y)
                 continue;
             else
             {
-                if(m_grid[dx + (dy * m_map_width)] == 1)
+                if(m_grid.at(dx + (dy * m_map_width)) == 1)
                     num_adjacent += 1;
             }
         }
@@ -74,9 +69,9 @@ int CellularMap::generate_grid(const int t_num_epoch)
     for(int i = 0; i < m_grid.size(); ++i)
     {
         if(start_probability(m_rnd_engine) <= m_start_chance)
-            m_grid[i] = TileID::FLOOR;
+            m_grid.at(i) = TileID::FLOOR;
         else
-            m_grid[i] = TileID::WALL;
+            m_grid.at(i) = TileID::WALL;
     }
 
     std::vector<int> temp_grid(m_map_width * m_map_height, 0);
@@ -92,14 +87,14 @@ int CellularMap::generate_grid(const int t_num_epoch)
 
                 for(int r = 0; r < m_rules.size(); ++r)
                 {
-                    if(m_rules[r](num_adjacent) != CELL_IGNORE)
-                        rule_result = m_rules[r](num_adjacent);
+                    if(m_rules.at(r)(num_adjacent) != CELL_IGNORE)
+                        rule_result = m_rules.at(r)(num_adjacent);
                 }
 
                 if(rule_result == CELL_LIVE)
-                    temp_grid[x + (y * m_map_width)] = TileID::FLOOR;
+                    temp_grid.at(x + (y * m_map_width)) = TileID::FLOOR;
                 else if(rule_result == CELL_DIE)
-                    temp_grid[x + (y * m_map_width)] = TileID::WALL;
+                    temp_grid.at(x + (y * m_map_width)) = TileID::WALL;
             }
         }
         m_grid = temp_grid;
@@ -111,9 +106,9 @@ int CellularMap::generate_grid(const int t_num_epoch)
         int y = i / m_map_width;
 
         if(y == 0 || y == m_map_height - 1)
-            m_grid[i] = TileID::WALL;
+            m_grid.at(i) = TileID::WALL;
         else if(x == 0 || x == m_map_width - 1)
-            m_grid[i] = TileID::WALL;
+            m_grid.at(i) = TileID::WALL;
     }
 
     return 0;
@@ -121,17 +116,17 @@ int CellularMap::generate_grid(const int t_num_epoch)
 
 void CellularMap::flood_fill(const int x, const int y)
 {
-    std::vector<int> stack(100);
+    std::vector<int> stack;
     bool span_above = false;
     bool span_below = false;
     int dx = 0;
     int dy = 0;
     int i = 0;
 
-    const int start_tile = m_grid[x + (y * m_map_width)];
+    const int start_tile = m_grid.at(x + (y * m_map_width));
     stack.push_back(x + (y * m_map_width));
 
-    auto test_tile = [&](int x, int y) -> bool {return m_grid[x + (y * m_map_width)] == start_tile;};
+    auto test_tile = [&](int x, int y) -> bool {return m_grid.at(x + (y * m_map_width)) == start_tile;};
     // std::cout << "Lambda output: " << test_tile(x, y) << "\n";
 
     while(stack.size() > 0)
@@ -151,7 +146,7 @@ void CellularMap::flood_fill(const int x, const int y)
 
         while(dx < m_map_width && test_tile(dx, dy) == true)
         {
-            m_grid[dx + (dy * m_map_width)] += TileID::FLOOD;
+            m_grid.at(dx + (dy * m_map_width)) += TileID::FLOOD;
             if(span_above == false && dy > 0 && test_tile(dx, dy-1) == true)
             {
                 stack.push_back(dx + ((dy-1) * m_map_width));
@@ -189,7 +184,7 @@ void CellularMap::generate_single_cavern(const int t_num_epoch, const int t_max_
 
         for(int i = 0; i < m_grid.size(); ++i)
         {
-            if(m_grid[i] >= (TileID::FLOOD + TileID::FLOOR))
+            if(m_grid.at(i) >= (TileID::FLOOD + TileID::FLOOR))
                 num_flood_tiles++;
         }
 
@@ -202,30 +197,28 @@ void CellularMap::generate_single_cavern(const int t_num_epoch, const int t_max_
 
     for(int i = 0; i < m_grid.size(); i++)
     {
-        if(m_grid[i] >= TileID::FLOOD)
-            m_grid[i] -= TileID::FLOOD;
+        if(m_grid.at(i) >= TileID::FLOOD)
+            m_grid.at(i) -= TileID::FLOOD;
         else
-            m_grid[i] = TileID::WALL;
+            m_grid.at(i) = TileID::WALL;
     }
 }
 
 void CellularMap::find_rooms()
 {
-    std::vector<int> temp_grid = m_grid;
-
-    for(int i = 0; i < temp_grid.size(); ++i)
+    for(int i = 0; i < m_grid.size(); ++i)
     {
-        if(temp_grid[i] == TileID::FLOOR)
+        if(m_grid.at(i) == TileID::FLOOR)
         {
             Room temp_room;
-            flood_fill(i % m_map_width, i / m_map_height);
-            for(int j = 0; j < temp_grid.size(); ++j)
+            flood_fill(i % m_map_width, i / m_map_width);
+            for(int j = 0; j < m_grid.size(); ++j)
             {
-                if(temp_grid[j] == (TileID::FLOOR + TileID::FLOOD))
+                if(m_grid.at(j) == (TileID::FLOOR + TileID::FLOOD))
                     temp_room.add_point(j);
             }
             m_rooms.push_back(temp_room);
-            flood_fill(i % m_map_width, i / m_map_height);
+            flood_fill(i % m_map_width, i / m_map_width);
         }
     }
 }
@@ -236,10 +229,10 @@ void CellularMap::print_rooms()
 
     for(int r = 0; r < m_rooms.size(); ++r)
     {
-        std::vector<int> room_grid = m_rooms[r].return_grid();
+        std::vector<int> room_grid = m_rooms.at(r).return_grid();
         for(int i = 0; i < room_grid.size(); ++i)
         {
-            m_grid[room_grid[i]] = r+2;
+            m_grid.at(room_grid.at(i)) = r+2;
         }
     }
 
@@ -252,7 +245,7 @@ void CellularMap::print_grid() const
     {
         for(int x = 0; x < m_map_width; ++x)
         {
-            std::cout << m_grid[x + (y * m_map_width)];
+            std::cout << m_grid.at(x + (y * m_map_width));
         }
         std::cout << "\n";
     }

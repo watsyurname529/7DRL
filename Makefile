@@ -1,7 +1,7 @@
 #Makefile!
 
 CPP = clang++
-CPPFLAGS = -std=c++11 -O2 -Wall
+CPPFLAGS = -std=c++11 -Wall
 
 DEBUG = -g -DDEBUG=1
 LDFLAGS = -L lib/ -ltcod -ltcodxx -Wl,-rpath=lib/
@@ -16,7 +16,7 @@ EXECUTABLE = a.out
 SOURCES = $(wildcard $(SOURCEDIR)/*.cpp)
 OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp,$(BUILDDIR)/%.o,$(SOURCES))
 
-all: $(EXECUTABLE)
+all: debug
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(CPP) $(CPPFLAGS) $(INCLUDES) $(LDFLAGS) $(OBJECTS) -o $@ 
@@ -26,6 +26,9 @@ $(OBJECTS): $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
 
 debug: CPPFLAGS += $(DEBUG)
 debug: $(EXECUTABLE)
+
+release: CPPFLAGS += -O2
+release: $(EXECUTABLE)
 
 clean:
 	$(RM) $(EXECUTABLE) $(OBJECTS)

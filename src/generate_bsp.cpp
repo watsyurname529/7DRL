@@ -161,7 +161,7 @@ void BSPTree::create_rect_room(Node* t_leaf)
     {
         for(int x = room_x1; x < room_x2; ++x)
         {
-            m_grid[x + (y * m_map_width)] = TileID::FLOOR;
+            m_grid.at(x + (y * m_map_width)) = TileID::FLOOR;
         }
     }
 }
@@ -170,9 +170,9 @@ void BSPTree::create_cave_room(Node* t_leaf)
 {
     int room_max_width = t_leaf -> m_x2 - t_leaf -> m_x1 - 2;
     int room_max_height = t_leaf -> m_y2 - t_leaf -> m_y1 - 2;
-    std::uniform_int_distribution<int> rnd(0, 1000);
+    std::uniform_int_distribution<int> r_seed(0, 1000);
 
-    CellularMap cave(rnd(m_rnd_engine), room_max_width, room_max_height);
+    CellularMap cave(r_seed(m_rnd_engine), room_max_width, room_max_height);
     CellRule rule_live(CELL_LIVE, 4, ">");
     CellRule rule_die(CELL_DIE, 4, "<");
     cave.set_start_chance(0.55);
@@ -192,7 +192,7 @@ void BSPTree::create_cave_room(Node* t_leaf)
     {
         for(int x = room_x1; x < room_x2; ++x)
         {
-            m_grid[x + (y * m_map_width)] = grid_cave[i];
+            m_grid.at(x + (y * m_map_width)) = grid_cave.at(i);
             i++;
         }
     }
@@ -209,7 +209,7 @@ void BSPTree::print_grid() const
     {
         for(int x = 0; x < m_map_width; ++x)
         {
-            std::cout << m_grid[x + (y * m_map_width)];
+            std::cout << m_grid.at(x + (y * m_map_width));
         }
         std::cout << "\n";
     }
@@ -233,7 +233,7 @@ void BSPTree::connect_leaf_center(Node* t_root)
     {
         for(int x = left_x; x < right_x; ++x)
         {
-            m_grid[x + (left_y * m_map_width)] = TileID::FLOOR;
+            m_grid.at(x + (left_y * m_map_width)) = TileID::FLOOR;
         }
     }
 
@@ -241,7 +241,7 @@ void BSPTree::connect_leaf_center(Node* t_root)
     {  
         for(int y = left_y; y < right_y; ++y)
         {
-            m_grid[left_x + (y * m_map_width)] = TileID::FLOOR;
+            m_grid.at(left_x + (y * m_map_width)) = TileID::FLOOR;
         }
     }
 }
