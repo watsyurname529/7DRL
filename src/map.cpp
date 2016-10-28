@@ -44,36 +44,6 @@ void Tile::draw(int x, int y, bool fov, TCODConsole* canvas) const
         canvas -> setCharBackground(x, y, m_bg_color_hid);
 }
 
-Room::Room()
-{
-
-}
-
-// Room::Room(std::vector<int>& t_grid)
-// {
-//     m_room_grid = t_grid;
-// }
-
-Room::Room(const Room& t_room)
-{
-    m_room_grid = t_room.m_room_grid;
-}
-
-void Room::add_point(const int i)
-{
-    m_room_grid.push_back(i);
-}
-
-void Room::set_room_grid(std::vector<int>& t_grid)
-{
-    m_room_grid = t_grid;
-}
-
-std::vector<int> Room::return_grid() const
-{
-    return m_room_grid;
-}
-
 Map::Map(int t_width, int t_height) : m_width(t_width), m_height(t_height) 
 {
     m_fovmap = new TCODMap(m_width, m_height);

@@ -8,6 +8,7 @@
 
 #include "libtcod.hpp"
 #include "map.h"
+#include "generate_aux.h"
 
 enum CellState
 {

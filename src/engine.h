@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "libtcod.hpp"
+#include "generate_aux.h"
 #include "generate_bsp.h"
 #include "generate_cellular.h"
 #include "map.h"
