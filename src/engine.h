@@ -1,6 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <memory>
 #include <random>
 #include <vector>
 
@@ -18,10 +19,11 @@ class Engine
         int m_screen_height;
 
         TCODConsole* m_canvas;
+        //std::unique_ptr<TCODConsole> m_canvas;
 
-        std::vector<Object*> m_object_list;
-        Object* m_player;
-        Map* m_dungeon;
+        std::vector<std::unique_ptr<Object>> m_object_list;
+        std::unique_ptr<Object> m_player;
+        std::unique_ptr<Map> m_dungeon;
 
     public:
         Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas = TCODConsole::root);

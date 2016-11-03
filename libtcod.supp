@@ -1,0 +1,98 @@
+{
+    sdl_cond
+    Memcheck:Cond
+    obj:/usr/lib64/libSDL2-2.0.so.0.2.1
+}
+
+{
+    sdl_free
+    Memcheck:Free
+    obj:/usr/lib64/libSDL2-2.0.so.0.2.1
+}
+
+{
+    sdl_val8
+    Memcheck:Value8
+    obj:/usr/lib64/libSDL2-2.0.so.0.2.1
+}
+
+{
+    sdl_val4
+    Memcheck:Value4
+    obj:/usr/lib64/libSDL2-2.0.so.0.2.1
+}
+
+{
+    sdl_leak
+    Memcheck:Leak
+    fun:*alloc
+    ...
+    obj:/usr/lib64/libSDL2-2.0.so.0.2.1
+    ...
+}
+
+{
+    nouveau_cond
+    Memcheck:Cond
+    obj:/usr/lib64/dri/nouveau_dri.so
+}
+
+{
+    noveau_free
+    Memcheck:Free
+    obj:/usr/lib64/dri/nouveau_dri.so
+}
+
+{
+    nouveau_val8
+    Memcheck:Value8
+    obj:/usr/lib64/dri/nouveau_dri.so
+}
+
+{
+    nouveau_val4
+    Memcheck:Value4
+    obj:/usr/lib64/dri/nouveau_dri.so
+}
+
+{
+    nouveau_leak
+    Memcheck:Leak
+    fun:*alloc
+    ...
+    obj:/usr/lib64/dri/nouveau_dri.so
+    ...
+}
+
+{
+    libtcod_cond
+    Memcheck:Cond
+    obj:/home/cuddandr/git/7DRL/lib/libtcod.so.0.0.0
+}
+
+{
+    libtcod_free
+    Memcheck:Free
+    obj:/home/cuddandr/git/7DRL/lib/libtcod.so.0.0.0
+}
+
+{
+    libtcod_val8
+    Memcheck:Value8
+    obj:/home/cuddandr/git/7DRL/lib/libtcod.so.0.0.0
+}
+
+{
+    libtcod_val4
+    Memcheck:Value4
+    obj:/home/cuddandr/git/7DRL/lib/libtcod.so.0.0.0
+}
+
+{
+    libtcod_leak
+    Memcheck:Leak
+    fun:*alloc
+    ...
+    obj:/home/cuddandr/git/7DRL/lib/libtcod.so.0.0.0
+    ...
+}

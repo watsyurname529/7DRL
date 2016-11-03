@@ -1,6 +1,7 @@
 #ifndef GENERATE_BSP_H
 #define GENERATE_BSP_H
 
+#include <memory>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -12,8 +13,8 @@
 
 struct Node
 {
-    Node* m_left_leaf;
-    Node* m_right_leaf;
+    std::unique_ptr<Node> m_left_leaf;
+    std::unique_ptr<Node> m_right_leaf;
 
     int m_x1, m_y1;
     int m_x2, m_y2;
@@ -32,7 +33,7 @@ class BSPTree
         std::vector<int> m_grid;
         std::mt19937 m_rnd_engine;
 
-        Node* m_root;
+        std::unique_ptr<Node> m_root;
 
         void fill_tree(Node* t_root);
         void split_tree(Node* t_root, const int num_splits, const int min_room_width, const int min_room_height);

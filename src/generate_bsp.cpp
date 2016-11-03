@@ -34,9 +34,9 @@ BSPTree::~BSPTree()
 void BSPTree::split_tree(const int num_splits, const int min_room_width, const int min_room_height)
 {
     if(m_root == nullptr)
-        m_root = new Node(nullptr, nullptr, 0, 0, m_map_width, m_map_height);
+        m_root = std::unique_ptr<Node>(new Node(nullptr, nullptr, 0, 0, m_map_width, m_map_height));
 
-    split_tree(m_root, num_splits, min_room_width, min_room_height);
+    split_tree(m_root.get(), num_splits, min_room_width, min_room_height);
 }
 
 void BSPTree::split_tree(Node* t_root, const int num_splits, const int min_room_width, const int min_room_height)
@@ -58,8 +58,8 @@ void BSPTree::split_tree(Node* t_root, const int num_splits, const int min_room_
             std::cout << num_splits << " YR " << t_root -> m_right_leaf -> m_y1 << " " << t_root -> m_right_leaf -> m_y2 << std::endl;
             #endif
             
-            split_tree(t_root -> m_left_leaf, num_splits - 1, min_room_width, min_room_height);
-            split_tree(t_root -> m_right_leaf, num_splits - 1, min_room_width, min_room_height);
+            split_tree(t_root -> m_left_leaf.get(), num_splits - 1, min_room_width, min_room_height);
+            split_tree(t_root -> m_right_leaf.get(), num_splits - 1, min_room_width, min_room_height);
         }
     }
 }
@@ -89,11 +89,11 @@ bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_r
             std::uniform_int_distribution<int> room_width(min_room_width, current_room_width - min_room_width);
             int split = room_width(m_rnd_engine);
 
-            t_root -> m_left_leaf = new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1,
-                                             t_root -> m_x1 + split, t_root -> m_y2);
+            t_root -> m_left_leaf = std::unique_ptr<Node>(new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1,
+                                                          t_root -> m_x1 + split, t_root -> m_y2));
 
-            t_root -> m_right_leaf = new Node(nullptr, nullptr, t_root -> m_x1 + split, t_root -> m_y1,
-                                              t_root -> m_x2, t_root -> m_y2); 
+            t_root -> m_right_leaf = std::unique_ptr<Node>(new Node(nullptr, nullptr, t_root -> m_x1 + split, t_root -> m_y1,
+                                                           t_root -> m_x2, t_root -> m_y2)); 
             split_success = true;
         }
     }
@@ -105,11 +105,11 @@ bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_r
             std::uniform_int_distribution<int> room_height(min_room_height, current_room_height - min_room_height);
             int split = room_height(m_rnd_engine);
 
-            t_root -> m_left_leaf = new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1,
-                                             t_root -> m_x2, t_root -> m_y1 + split);
+            t_root -> m_left_leaf = std::unique_ptr<Node>(new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1,
+                                                          t_root -> m_x2, t_root -> m_y1 + split));
 
-            t_root -> m_right_leaf = new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1 + split,
-                                              t_root -> m_x2, t_root -> m_y2);
+            t_root -> m_right_leaf = std::unique_ptr<Node>(new Node(nullptr, nullptr, t_root -> m_x1, t_root -> m_y1 + split,
+                                                           t_root -> m_x2, t_root -> m_y2));
             split_success = true;
         } 
     }
@@ -120,15 +120,15 @@ bool BSPTree::split_node(Node* t_root, const int min_room_width, const int min_r
 void BSPTree::fill_tree()
 {
     if(m_root != nullptr)
-        fill_tree(m_root);
+        fill_tree(m_root.get());
 }
 
 void BSPTree::fill_tree(Node* t_root)
 {
     if(t_root -> m_left_leaf != nullptr && t_root -> m_right_leaf != nullptr)
     {
-        fill_tree(t_root -> m_left_leaf);
-        fill_tree(t_root -> m_right_leaf);
+        fill_tree(t_root -> m_left_leaf.get());
+        fill_tree(t_root -> m_right_leaf.get());
         connect_leaf_center(t_root);
     }
 

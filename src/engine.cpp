@@ -1,18 +1,11 @@
 #include "engine.h"
 
 Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
-               m_screen_width(t_screen_width), m_screen_height(t_screen_height),
+               m_screen_width(t_screen_width),
+               m_screen_height(t_screen_height),
                m_canvas(t_canvas)
 {
-    m_dungeon = new Map(m_screen_width, m_screen_height);
-
-    // for(int w = 10; w < 60; w++)
-    // {
-    //     for(int h = 10; h < 40; h++)
-    //     {
-    //         m_dungeon -> add_tile(w, h, new Tile(' ', TCODColor::black, TCODColor::black, false, false, false));
-    //     }
-    // }
+    m_dungeon = std::unique_ptr<Map>(new Map(m_screen_width, m_screen_height));
 
     std::random_device rnd;
     // BSPTree test_tree(rnd(), m_screen_width, m_screen_height);
@@ -32,18 +25,13 @@ Engine::Engine(int t_screen_width, int t_screen_height, TCODConsole* t_canvas) :
 
     m_dungeon -> grid_to_map(test_cell.return_grid());
 
-    m_player = new Object(m_screen_width / 2, m_screen_height / 2, '@', TCODColor::white, true, false);
+    m_player = std::unique_ptr<Object>(new Object(m_screen_width / 2, m_screen_height / 2, '@', TCODColor::white, true, false));
     m_dungeon -> compute_fov(m_player -> get_x(), m_player -> get_y(), 10);
 }
 
 Engine::~Engine()
 {
-    delete m_player;
 
-    for(auto& obj : m_object_list)
-    {
-        delete obj;
-    }
 }
 
 void Engine::update()
