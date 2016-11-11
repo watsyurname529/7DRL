@@ -46,7 +46,7 @@ class Map
         int m_width;
         int m_height;
 
-        std::vector<Tile*> m_tiles;
+        std::vector<std::unique_ptr<Tile>> m_tiles;
         TCODMap* m_fovmap;
 
     public:

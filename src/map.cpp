@@ -56,10 +56,6 @@ Map::Map(int t_width, int t_height) : m_width(t_width), m_height(t_height)
 
 Map::~Map()
 {
-    for(int idx = 0; idx < m_tiles.size(); ++idx)
-    {
-        delete m_tiles[idx];
-    }
     delete m_fovmap;
 }
 
@@ -97,13 +93,12 @@ void Map::render(TCODConsole* canvas) const
 
 void Map::add_tile(int x, int y, Tile* t_tile)
 {
-    delete m_tiles.at(x + (y * m_width));
-    m_tiles.at(x + (y * m_width)) = t_tile;
+    m_tiles.at(x + (y * m_width)) = std::unique_ptr<Tile>(t_tile);
 }
 
 Tile* Map::get_tile(int x, int y) const
 {
-    return m_tiles.at(x + (y * m_width));
+    return m_tiles.at(x + (y * m_width)).get();
 }
 
 void Map::grid_to_map(std::vector<int> t_grid)
@@ -113,16 +108,15 @@ void Map::grid_to_map(std::vector<int> t_grid)
         for(int x = 0; x < m_width; ++x)
         {
             int idx = x + (y * m_width);
-            delete m_tiles.at(idx);
         
             if(t_grid.at(idx) == 1)
             {
-                m_tiles.at(idx) = new Tile(' ', TCODColor::black, TCODColor::sepia, TCODColor::darkerSepia, false, false, false);
+                m_tiles.at(idx) = std::unique_ptr<Tile>(new Tile(' ', TCODColor::black, TCODColor::sepia, TCODColor::darkerSepia, false, false, false));
                 m_fovmap -> setProperties(x, y, true, true);
             }
             else
             {
-                m_tiles.at(idx) = new Tile('#', TCODColor::white, TCODColor::darkGrey, TCODColor::darkerGrey, false, true, true);
+                m_tiles.at(idx) = std::unique_ptr<Tile>(new Tile('#', TCODColor::white, TCODColor::darkGrey, TCODColor::darkerGrey, false, true, true));
                 m_fovmap -> setProperties(x, y, false, false);
             }
         }
